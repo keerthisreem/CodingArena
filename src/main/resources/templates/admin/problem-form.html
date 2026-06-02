@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${isEdit} ? 'Edit Problem' : 'New Problem'">Problem Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}"><i class="fas fa-code"></i> CodingArena</a></div>
+    <div class="nav-links">
+        <a th:href="@{/admin/problems}"><i class="fas fa-list"></i> Problems</a>
+        <a th:href="@{/admin}" class="nav-admin"><i class="fas fa-cog"></i> Admin</a>
+        <a th:href="@{/profile}"><i class="fas fa-user"></i> <span sec:authentication="name">Admin</span></a>
+        <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+</nav>
+
+<div class="page-content">
+    <div class="breadcrumb">
+        <a th:href="@{/admin}">Admin</a> <i class="fas fa-chevron-right"></i>
+        <a th:href="@{/admin/problems}">Problems</a> <i class="fas fa-chevron-right"></i>
+        <span th:text="${isEdit} ? 'Edit' : 'New Problem'">New</span>
+    </div>
+
+    <div class="form-card">
+        <h2 th:text="${isEdit} ? '✏️ Edit Problem' : '➕ Add New Problem'">Form</h2>
+
+        <form th:action="${isEdit} ? '/admin/problems/' + problem.id + '/edit' : '/admin/problems/new'"
+              method="post" class="problem-form">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-heading"></i> Problem Title *</label>
+                    <input type="text" name="title" th:value="${problem.title}"
+                           placeholder="e.g. Sum of Two Numbers" required/>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-signal"></i> Difficulty *</label>
+                    <select name="difficulty" required>
+                        <option value="">-- Select --</option>
+                        <option th:each="d : ${difficulties}" th:value="${d}"
+                                th:text="${d}" th:selected="${problem.difficulty == d}">EASY</option>
+                    </select>
+                </div>
+                <div class="form-group form-group-sm">
+                    <label><i class="fas fa-star"></i> Points</label>
+                    <input type="number" name="points" th:value="${problem.points ?: 10}" min="1" max="100"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-file-alt"></i> Problem Description *</label>
+                <textarea name="description" rows="4" required
+                          placeholder="Describe the problem clearly..."
+                          th:text="${problem.description}"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-sign-in-alt"></i> Input Format</label>
+                    <textarea name="inputFormat" rows="3"
+                              placeholder="Describe the input format..."
+                              th:text="${problem.inputFormat}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sign-out-alt"></i> Output Format</label>
+                    <textarea name="outputFormat" rows="3"
+                              placeholder="Describe the output format..."
+                              th:text="${problem.outputFormat}"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-ruler"></i> Constraints</label>
+                <textarea name="constraints" rows="2"
+                          placeholder="e.g. 1 ≤ N ≤ 10^9"
+                          th:text="${problem.constraints}"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-keyboard"></i> Sample Input</label>
+                    <textarea name="sampleInput" rows="3"
+                              placeholder="Example input shown to user..."
+                              th:text="${problem.sampleInput}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-terminal"></i> Sample Output</label>
+                    <textarea name="sampleOutput" rows="3"
+                              placeholder="Example output shown to user..."
+                              th:text="${problem.sampleOutput}"></textarea>
+                </div>
+            </div>
+
+            <div class="form-group highlight-group">
+                <label><i class="fas fa-check-double"></i> Expected Output (for Judge) *</label>
+                <p class="field-hint">This is the correct output used to judge submissions. NOT shown to users.</p>
+                <textarea name="expectedOutput" rows="3" required
+                          placeholder="The exact expected output for judging..."
+                          th:text="${problem.expectedOutput}"></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    <i th:class="${isEdit} ? 'fas fa-save' : 'fas fa-plus'"></i>
+                    <span th:text="${isEdit} ? 'Update Problem' : 'Create Problem'">Submit</span>
+                </button>
+                <a th:href="@{/admin/problems}" class="btn-outline">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="footer"><p>&copy; 2025 CodingArena</p></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

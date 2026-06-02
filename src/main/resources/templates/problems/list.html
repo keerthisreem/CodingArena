@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Problems — Coding Arena</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}"><i class="fas fa-code"></i> CodingArena</a></div>
+    <div class="nav-links">
+        <a th:href="@{/problems}" class="active"><i class="fas fa-list"></i> Problems</a>
+        <a th:href="@{/leaderboard}"><i class="fas fa-trophy"></i> Leaderboard</a>
+        <div sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" class="nav-admin"><i class="fas fa-cog"></i> Admin</a></div>
+        <div sec:authorize="isAuthenticated()">
+            <a th:href="@{/profile}"><i class="fas fa-user"></i> <span sec:authentication="name">User</span></a>
+            <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-content">
+    <div class="page-header">
+        <h1><i class="fas fa-list-alt"></i> Problem Bank</h1>
+        <p>Pick a problem, write your solution, get judged instantly.</p>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+        <a th:href="@{/problems}" th:classappend="${selectedDifficulty == null} ? 'active' : ''" class="filter-btn">All</a>
+        <a th:href="@{/problems(difficulty='EASY')}" th:classappend="${selectedDifficulty == 'EASY'} ? 'active easy-active' : ''" class="filter-btn easy">Easy</a>
+        <a th:href="@{/problems(difficulty='MEDIUM')}" th:classappend="${selectedDifficulty == 'MEDIUM'} ? 'active medium-active' : ''" class="filter-btn medium">Medium</a>
+        <a th:href="@{/problems(difficulty='HARD')}" th:classappend="${selectedDifficulty == 'HARD'} ? 'active hard-active' : ''" class="filter-btn hard">Hard</a>
+    </div>
+
+    <!-- Problems table -->
+    <div class="table-wrap">
+        <table class="problems-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Status</th>
+                    <th>Title</th>
+                    <th>Difficulty</th>
+                    <th>Points</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="problem, iter : ${problems}">
+                    <td class="num" th:text="${iter.count}">1</td>
+                    <td class="status">
+                        <span th:if="${solvedIds != null and #lists.contains(solvedIds, problem.id)}" class="solved-badge" title="Solved"><i class="fas fa-check-circle"></i></span>
+                        <span th:unless="${solvedIds != null and #lists.contains(solvedIds, problem.id)}" class="unsolved-badge"><i class="far fa-circle"></i></span>
+                    </td>
+                    <td class="title-cell">
+                        <a th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}">Problem Title</a>
+                    </td>
+                    <td>
+                        <span th:class="'badge badge-' + ${problem.difficulty.name().toLowerCase()}" th:text="${problem.difficulty}">EASY</span>
+                    </td>
+                    <td class="points"><i class="fas fa-star"></i> <span th:text="${problem.points}">10</span></td>
+                    <td>
+                        <a th:href="@{/problems/{id}(id=${problem.id})}" class="btn-sm">Solve</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(problems)}">
+                    <td colspan="6" class="empty-msg">No problems yet. Check back soon!</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="footer"><p>&copy; 2025 CodingArena</p></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

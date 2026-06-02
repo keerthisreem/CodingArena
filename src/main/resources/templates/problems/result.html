@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Result — Coding Arena</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}"><i class="fas fa-code"></i> CodingArena</a></div>
+    <div class="nav-links">
+        <a th:href="@{/problems}"><i class="fas fa-list"></i> Problems</a>
+        <a th:href="@{/leaderboard}"><i class="fas fa-trophy"></i> Leaderboard</a>
+        <div sec:authorize="isAuthenticated()">
+            <a th:href="@{/profile}"><i class="fas fa-user"></i> <span sec:authentication="name">User</span></a>
+            <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-content result-page">
+    <div th:if="${submission}">
+        <!-- Verdict banner -->
+        <div th:class="'verdict-banner verdict-' + ${submission.verdict.name().toLowerCase()}">
+            <div class="verdict-icon">
+                <i th:class="${submission.verdict.name() == 'ACCEPTED'} ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+            </div>
+            <div class="verdict-text">
+                <h2 th:text="${submission.verdict.name().replace('_',' ')}">ACCEPTED</h2>
+                <p th:if="${submission.verdict.name() == 'ACCEPTED'}">Great job! You earned <strong th:text="${problem.points}">10</strong> points.</p>
+                <p th:if="${submission.verdict.name() == 'WRONG_ANSWER'}">Your output doesn't match. Review and try again.</p>
+                <p th:if="${submission.verdict.name() == 'RUNTIME_ERROR'}">No output detected. Check if your program runs correctly.</p>
+            </div>
+        </div>
+
+        <!-- Details -->
+        <div class="result-details">
+            <div class="result-card">
+                <h3><i class="fas fa-info-circle"></i> Submission Details</h3>
+                <table class="details-table">
+                    <tr><td>Problem</td><td th:text="${problem.title}">Title</td></tr>
+                    <tr><td>Language</td><td th:text="${submission.language}">JAVA</td></tr>
+                    <tr><td>Verdict</td>
+                        <td><span th:class="'verdict-badge ' + ${submission.verdict.name().toLowerCase()}"
+                                  th:text="${submission.verdict.name().replace('_',' ')}">ACCEPTED</span></td></tr>
+                    <tr><td>Submitted</td><td th:text="${#temporals.format(submission.submittedAt,'dd MMM yyyy HH:mm')}">time</td></tr>
+                </table>
+            </div>
+
+            <div class="result-card" th:if="${submission.output}">
+                <h3><i class="fas fa-terminal"></i> Your Output</h3>
+                <pre class="output-display" th:text="${submission.output}">output</pre>
+            </div>
+
+            <div class="result-card">
+                <h3><i class="fas fa-code"></i> Your Code</h3>
+                <pre class="output-display" th:text="${submission.code}">code</pre>
+            </div>
+        </div>
+
+        <div class="result-actions">
+            <a th:href="@{/problems/{id}/submit(id=${problem.id})}" class="btn-primary"><i class="fas fa-redo"></i> Try Again</a>
+            <a th:href="@{/problems}" class="btn-outline"><i class="fas fa-list"></i> All Problems</a>
+            <a th:href="@{/leaderboard}" class="btn-outline"><i class="fas fa-trophy"></i> Leaderboard</a>
+        </div>
+    </div>
+</div>
+
+<footer class="footer"><p>&copy; 2025 CodingArena</p></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

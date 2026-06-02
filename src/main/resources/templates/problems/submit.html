@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Submit — Coding Arena</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}"><i class="fas fa-code"></i> CodingArena</a></div>
+    <div class="nav-links">
+        <a th:href="@{/problems}"><i class="fas fa-list"></i> Problems</a>
+        <a th:href="@{/leaderboard}"><i class="fas fa-trophy"></i> Leaderboard</a>
+        <div sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" class="nav-admin"><i class="fas fa-cog"></i> Admin</a></div>
+        <div sec:authorize="isAuthenticated()">
+            <a th:href="@{/profile}"><i class="fas fa-user"></i> <span sec:authentication="name">User</span></a>
+            <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-content">
+    <div class="breadcrumb">
+        <a th:href="@{/problems}">Problems</a> <i class="fas fa-chevron-right"></i>
+        <a th:href="@{/problems/{id}(id=${problem.id})}" th:text="${problem.title}">Problem</a>
+        <i class="fas fa-chevron-right"></i> Submit
+    </div>
+
+    <div class="submit-layout">
+        <div class="problem-summary">
+            <h2 th:text="${problem.title}">Title</h2>
+            <span th:class="'badge badge-' + ${problem.difficulty.name().toLowerCase()}" th:text="${problem.difficulty}">EASY</span>
+            <span class="points-badge"><i class="fas fa-star"></i> <span th:text="${problem.points}">10</span> pts</span>
+
+            <div class="summary-section" th:if="${problem.sampleInput}">
+                <h4>Sample Input</h4>
+                <pre th:text="${problem.sampleInput}">input</pre>
+            </div>
+            <div class="summary-section" th:if="${problem.sampleOutput}">
+                <h4>Expected Output</h4>
+                <pre th:text="${problem.sampleOutput}">output</pre>
+            </div>
+            <div class="summary-section">
+                <h4><i class="fas fa-info-circle"></i> How to submit</h4>
+                <p>1. Write your code in the editor.</p>
+                <p>2. Enter the input in the <strong>stdin</strong> box.</p>
+                <p>3. Run your code locally and paste the output in the Output box.</p>
+                <p>4. Click <strong>Submit Solution</strong> to get judged.</p>
+            </div>
+        </div>
+
+        <div class="editor-panel">
+            <form th:action="@{/problems/{id}/submit(id=${problem.id})}" method="post">
+
+                <div class="editor-header">
+                    <label><i class="fas fa-code"></i> Your Code</label>
+                    <select name="language" id="langSelect" class="lang-select">
+                        <option value="JAVA">Java</option>
+                        <option value="PYTHON">Python</option>
+                        <option value="CPP">C++</option>
+                    </select>
+                </div>
+
+                <div class="code-editor-wrap">
+                    <div class="line-numbers" id="lineNumbers">1</div>
+                    <textarea name="code" id="codeEditor" class="code-editor"
+                              placeholder="// Write your solution here..." rows="18"
+                              spellcheck="false"></textarea>
+                </div>
+
+                <!-- Stdin input -->
+                <div class="output-section" style="margin-top:1rem;">
+                    <label><i class="fas fa-keyboard"></i> Input (stdin)</label>
+                    <p class="output-hint">Enter the input your program reads e.g. <strong>3 5</strong></p>
+                    <textarea id="stdinInput" class="output-editor" rows="2"
+                              placeholder="e.g. 3 5"></textarea>
+                </div>
+
+                <!-- Run button -->
+                <div style="display:flex;align-items:center;gap:1rem;margin:1rem 0;">
+                    <button type="button" class="btn-run" id="runBtn" onclick="runCode()">
+                        <i class="fas fa-info-circle"></i> Help
+                    </button>
+                    <span id="runStatus" style="font-size:.85rem;font-weight:500;"></span>
+                </div>
+
+                <!-- Output -->
+                <div class="output-section">
+                    <label><i class="fas fa-terminal"></i> Output</label>
+                    <p class="output-hint">Output auto-fills after running. Or paste manually.</p>
+                    <textarea name="userOutput" id="userOutput" class="output-editor" rows="4"
+                              placeholder="Output appears here after running..."></textarea>
+                </div>
+
+                <!-- Submit -->
+                <div class="submit-actions">
+                    <button type="submit" class="btn-primary btn-submit">
+                        <i class="fas fa-paper-plane"></i> Submit Solution
+                    </button>
+                    <a th:href="@{/problems/{id}(id=${problem.id})}" class="btn-outline">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer class="footer"><p>&copy; 2025 CodingArena</p></footer>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    function runCode() {
+        const status = document.getElementById('runStatus');
+        const outputBox = document.getElementById('userOutput');
+
+        status.textContent =
+            'Run your code locally and paste the output below.';
+        status.style.color = '#e3b341';
+
+        outputBox.focus();
+    }
+</script>
+</body>
+</html>

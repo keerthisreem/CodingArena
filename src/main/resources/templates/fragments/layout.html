@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:replace="${pageTitle} ?: 'Coding Arena'">Coding Arena</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">
+        <a th:href="@{/}"><i class="fas fa-code"></i> CodingArena</a>
+    </div>
+    <div class="nav-links">
+        <a th:href="@{/problems}"><i class="fas fa-list"></i> Problems</a>
+        <a th:href="@{/leaderboard}"><i class="fas fa-trophy"></i> Leaderboard</a>
+        <div sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin}" class="nav-admin"><i class="fas fa-cog"></i> Admin</a>
+        </div>
+        <div sec:authorize="isAuthenticated()">
+            <a th:href="@{/profile}"><i class="fas fa-user"></i>
+                <span sec:authentication="name">User</span></a>
+            <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+        <div sec:authorize="isAnonymous()">
+            <a th:href="@{/login}" class="btn-login">Login</a>
+            <a th:href="@{/register}" class="btn-register">Register</a>
+        </div>
+    </div>
+</nav>
+
+<div class="flash-messages" th:if="${success != null or error != null}">
+    <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+    <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+</div>
+
+<main class="main-content">
+    <th:block th:fragment="content"></th:block>
+</main>
+
+<footer class="footer">
+    <p>&copy; 2025 CodingArena &mdash; Built with Spring Boot &amp; Thymeleaf</p>
+</footer>
+
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

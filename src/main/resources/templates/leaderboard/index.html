@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Leaderboard — Coding Arena</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}"><i class="fas fa-code"></i> CodingArena</a></div>
+    <div class="nav-links">
+        <a th:href="@{/problems}"><i class="fas fa-list"></i> Problems</a>
+        <a th:href="@{/leaderboard}" class="active"><i class="fas fa-trophy"></i> Leaderboard</a>
+        <div sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" class="nav-admin"><i class="fas fa-cog"></i> Admin</a></div>
+        <div sec:authorize="isAuthenticated()">
+            <a th:href="@{/profile}"><i class="fas fa-user"></i> <span sec:authentication="name">User</span></a>
+            <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-content">
+    <div class="page-header">
+        <h1><i class="fas fa-trophy"></i> Leaderboard</h1>
+        <p>Top coders ranked by score. Your rank: <strong th:text="'#' + ${myRank}">#1</strong></p>
+    </div>
+
+    <!-- Top 3 podium -->
+    <div class="podium" th:if="${#lists.size(users) >= 3}">
+        <div class="podium-slot silver" th:if="${#lists.size(users) >= 2}">
+            <div class="podium-avatar">🥈</div>
+            <div class="podium-name" th:text="${users[1].username}">2nd</div>
+            <div class="podium-score" th:text="${users[1].score} + ' pts'">score</div>
+            <div class="podium-block silver-block">2</div>
+        </div>
+        <div class="podium-slot gold">
+            <div class="podium-avatar">🥇</div>
+            <div class="podium-name" th:text="${users[0].username}">1st</div>
+            <div class="podium-score" th:text="${users[0].score} + ' pts'">score</div>
+            <div class="podium-block gold-block">1</div>
+        </div>
+        <div class="podium-slot bronze" th:if="${#lists.size(users) >= 3}">
+            <div class="podium-avatar">🥉</div>
+            <div class="podium-name" th:text="${users[2].username}">3rd</div>
+            <div class="podium-score" th:text="${users[2].score} + ' pts'">score</div>
+            <div class="podium-block bronze-block">3</div>
+        </div>
+    </div>
+
+    <!-- Full table -->
+    <div class="table-wrap">
+        <table class="problems-table leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Coder</th>
+                    <th>Problems Solved</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user, iter : ${users}"
+                    th:classappend="${user.username == #authentication.name} ? 'my-row' : ''">
+                    <td>
+                        <span th:if="${iter.count == 1}">🥇</span>
+                        <span th:if="${iter.count == 2}">🥈</span>
+                        <span th:if="${iter.count == 3}">🥉</span>
+                        <span th:if="${iter.count > 3}" th:text="'#' + ${iter.count}">#4</span>
+                    </td>
+                    <td>
+                        <span class="coder-name" th:text="${user.username}">username</span>
+                        <span class="you-badge" th:if="${user.username == #authentication.name}">YOU</span>
+                    </td>
+                    <td th:text="${user.problemsSolved}">0</td>
+                    <td class="score-cell"><i class="fas fa-star"></i> <span th:text="${user.score}">0</span></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(users)}">
+                    <td colspan="4" class="empty-msg">No users yet. Be the first to register!</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="footer"><p>&copy; 2025 CodingArena</p></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

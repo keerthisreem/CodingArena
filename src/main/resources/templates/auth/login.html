@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login — Coding Arena</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="auth-body">
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <a th:href="@{/}" class="auth-logo"><i class="fas fa-code"></i> CodingArena</a>
+            <h2>Welcome Back</h2>
+            <p>Login to continue solving problems</p>
+        </div>
+
+        <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+        <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/login}" method="post" class="auth-form">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Username</label>
+                <input type="text" name="username" placeholder="Your username" required autofocus/>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Password</label>
+                <input type="password" name="password" placeholder="Your password" required/>
+            </div>
+            <button type="submit" class="btn-primary btn-full"><i class="fas fa-sign-in-alt"></i> Login</button>
+        </form>
+
+        <div class="demo-hint">
+            <p><strong>Demo:</strong> admin / admin123</p>
+        </div>
+
+        <div class="auth-footer">
+            Don't have an account? <a th:href="@{/register}">Register here</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

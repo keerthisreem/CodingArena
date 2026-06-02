@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Manage Problems — Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}"><i class="fas fa-code"></i> CodingArena</a></div>
+    <div class="nav-links">
+        <a th:href="@{/problems}"><i class="fas fa-list"></i> Problems</a>
+        <a th:href="@{/admin}" class="nav-admin"><i class="fas fa-cog"></i> Admin</a>
+        <a th:href="@{/profile}"><i class="fas fa-user"></i> <span sec:authentication="name">Admin</span></a>
+        <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+</nav>
+
+<div class="page-content">
+    <div class="page-header-row">
+        <h1><i class="fas fa-puzzle-piece"></i> Manage Problems</h1>
+        <a th:href="@{/admin/problems/new}" class="btn-primary"><i class="fas fa-plus"></i> Add New Problem</a>
+    </div>
+
+    <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+    <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+    <div class="table-wrap">
+        <table class="problems-table">
+            <thead>
+                <tr><th>#</th><th>Title</th><th>Difficulty</th><th>Points</th><th>Created</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="p, iter : ${problems}">
+                    <td th:text="${iter.count}">1</td>
+                    <td>
+                        <a th:href="@{/problems/{id}(id=${p.id})}" th:text="${p.title}">Title</a>
+                    </td>
+                    <td><span th:class="'badge badge-' + ${p.difficulty.name().toLowerCase()}" th:text="${p.difficulty}">EASY</span></td>
+                    <td><i class="fas fa-star"></i> <span th:text="${p.points}">10</span></td>
+                    <td th:text="${#temporals.format(p.createdAt,'dd MMM yyyy')}">date</td>
+                    <td class="action-btns">
+                        <a th:href="@{/admin/problems/{id}/edit(id=${p.id})}" class="btn-sm btn-edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <form th:action="@{/admin/problems/{id}/delete(id=${p.id})}" method="post"
+                              style="display:inline" onsubmit="return confirm('Delete this problem?')">
+                            <button type="submit" class="btn-sm btn-delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(problems)}">
+                    <td colspan="6" class="empty-msg">No problems yet. <a th:href="@{/admin/problems/new}">Add one!</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="footer"><p>&copy; 2025 CodingArena</p></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

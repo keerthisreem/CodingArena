@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Profile — Coding Arena</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}"><i class="fas fa-code"></i> CodingArena</a></div>
+    <div class="nav-links">
+        <a th:href="@{/problems}"><i class="fas fa-list"></i> Problems</a>
+        <a th:href="@{/leaderboard}"><i class="fas fa-trophy"></i> Leaderboard</a>
+        <div sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" class="nav-admin"><i class="fas fa-cog"></i> Admin</a></div>
+        <a th:href="@{/profile}" class="active"><i class="fas fa-user"></i> <span sec:authentication="name">User</span></a>
+        <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+</nav>
+
+<div class="page-content">
+    <div class="profile-layout">
+        <!-- Left: user card -->
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <span th:text="${#strings.toUpperCase(#strings.substring(user.username,0,1))}">K</span>
+            </div>
+            <h2 th:text="${user.username}">username</h2>
+            <p class="profile-email" th:text="${user.email}">email</p>
+            <span class="badge" th:classappend="${user.role.name() == 'ADMIN'} ? ' badge-hard' : ' badge-easy'"
+                  th:text="${user.role}">USER</span>
+
+            <div class="profile-stats">
+                <div class="pstat">
+                    <span class="pstat-num" th:text="${user.score}">0</span>
+                    <span class="pstat-lbl">Total Score</span>
+                </div>
+                <div class="pstat">
+                    <span class="pstat-num" th:text="${user.problemsSolved}">0</span>
+                    <span class="pstat-lbl">Solved</span>
+                </div>
+                <div class="pstat">
+                    <span class="pstat-num" th:text="${#lists.size(submissions)}">0</span>
+                    <span class="pstat-lbl">Submissions</span>
+                </div>
+            </div>
+
+            <p class="profile-since">
+                <i class="fas fa-calendar-alt"></i>
+                Member since <span th:text="${#temporals.format(user.createdAt,'MMM yyyy')}">Jan 2025</span>
+            </p>
+        </div>
+
+        <!-- Right: submissions -->
+        <div class="profile-submissions">
+            <h3><i class="fas fa-history"></i> Submission History</h3>
+            <div class="table-wrap">
+                <table class="problems-table">
+                    <thead>
+                        <tr>
+                            <th>Problem</th>
+                            <th>Language</th>
+                            <th>Verdict</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="sub : ${submissions}">
+                            <td>
+                                <a th:href="@{/problems/{id}(id=${sub.problem.id})}"
+                                   th:text="${sub.problem.title}">Problem</a>
+                            </td>
+                            <td th:text="${sub.language}">JAVA</td>
+                            <td>
+                                <span th:class="'verdict-badge ' + ${sub.verdict.name().toLowerCase()}"
+                                      th:text="${sub.verdict.name().replace('_',' ')}">ACCEPTED</span>
+                            </td>
+                            <td th:text="${#temporals.format(sub.submittedAt,'dd MMM HH:mm')}">date</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(submissions)}">
+                            <td colspan="4" class="empty-msg">No submissions yet. <a th:href="@{/problems}">Start solving!</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer"><p>&copy; 2025 CodingArena</p></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Coding Arena — Home</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-brand"><a th:href="@{/}"><i class="fas fa-code"></i> CodingArena</a></div>
+    <div class="nav-links">
+        <a th:href="@{/problems}"><i class="fas fa-list"></i> Problems</a>
+        <a th:href="@{/leaderboard}"><i class="fas fa-trophy"></i> Leaderboard</a>
+        <div sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin}" class="nav-admin"><i class="fas fa-cog"></i> Admin</a></div>
+        <div sec:authorize="isAuthenticated()">
+            <a th:href="@{/profile}"><i class="fas fa-user"></i> <span sec:authentication="name">User</span></a>
+            <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+        <div sec:authorize="isAnonymous()">
+            <a th:href="@{/login}" class="btn-login">Login</a>
+            <a th:href="@{/register}" class="btn-register">Register</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge"><i class="fas fa-bolt"></i> Practice. Compete. Grow.</div>
+        <h1>Welcome to <span class="accent">Coding Arena</span></h1>
+        <p>Sharpen your problem-solving skills with curated challenges. Compete with peers, climb the leaderboard, and get placement-ready.</p>
+        <div class="hero-ctas">
+            <a th:href="@{/problems}" class="btn-primary"><i class="fas fa-play"></i> Start Solving</a>
+            <a th:href="@{/register}" class="btn-outline" sec:authorize="isAnonymous()"><i class="fas fa-user-plus"></i> Join Now</a>
+            <a th:href="@{/leaderboard}" class="btn-outline" sec:authorize="isAuthenticated()"><i class="fas fa-trophy"></i> Leaderboard</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat"><span class="stat-num" th:text="${totalProblems}">0</span><span class="stat-lbl">Problems</span></div>
+            <div class="stat"><span class="stat-num" th:text="${totalUsers}">0</span><span class="stat-lbl">Coders</span></div>
+            <div class="stat"><span class="stat-num">3</span><span class="stat-lbl">Difficulty Levels</span></div>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="code-window">
+            <div class="window-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="window-title">Solution.java</span></div>
+            <pre class="code-block"><span class="kw">public class</span> <span class="cls">Solution</span> {
+  <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+    Scanner sc = <span class="kw">new</span> Scanner(System.in);
+    <span class="kw">int</span> a = sc.nextInt();
+    <span class="kw">int</span> b = sc.nextInt();
+    System.out.println(a + b);
+  }
+}
+<span class="accepted">// ✅ Accepted — 10 pts</span></pre>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon easy"><i class="fas fa-seedling"></i></div>
+            <h3>Curated Problems</h3>
+            <p>Easy, Medium and Hard problems across all key CS topics — Arrays, DP, Graphs, Strings and more.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon medium"><i class="fas fa-gavel"></i></div>
+            <h3>Instant Judge</h3>
+            <p>Submit your solution and get an instant verdict — Accepted, Wrong Answer, or Runtime Error.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon hard"><i class="fas fa-trophy"></i></div>
+            <h3>Live Leaderboard</h3>
+            <p>See where you stand among your peers. Every accepted solution earns you points and a rank.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon accent"><i class="fas fa-history"></i></div>
+            <h3>Submission History</h3>
+            <p>Review all your past submissions, track your progress, and see what you solved.</p>
+        </div>
+    </div>
+</section>
+
+<footer class="footer"><p>&copy; 2025 CodingArena &mdash; Built with Spring Boot &amp; Thymeleaf</p></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
